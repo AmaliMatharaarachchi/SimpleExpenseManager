@@ -83,5 +83,3 @@ public class DBHandler extends SQLiteOpenHelper{
 
 
 }
-
-

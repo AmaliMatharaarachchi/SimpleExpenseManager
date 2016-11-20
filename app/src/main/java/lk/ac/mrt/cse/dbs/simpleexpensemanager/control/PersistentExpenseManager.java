@@ -23,9 +23,8 @@ public class PersistentExpenseManager extends ExpenseManager{
 
     @Override
     public void setup(){
-        DBHandler dbHandler= new DBHandler(context);
-        SQLiteDatabase db= context.openOrCreateDatabase("SimpleExpenseManager_140340E",context.MODE_PRIVATE, null);
-        dbHandler.onCreate(db);
+//        DBHandler dbHandler= new DBHandler(context);
+
         TransactionDAO persistentTransactionDAO = new PersistentTransactionDAO(context);
         setTransactionsDAO(persistentTransactionDAO);
 
