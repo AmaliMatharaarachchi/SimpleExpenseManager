@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.widget.Toast;
 
 import java.text.DateFormat;
@@ -33,31 +34,23 @@ public class PersistentTransactionDAO implements TransactionDAO {
 
     @Override
     public void logTransaction(Date date, String accountNo, ExpenseType expenseType, double amount) {
-        boolean transactionType = false;
-        if (expenseType == ExpenseType.EXPENSE) transactionType = true;
-
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-yyyy");
-        String formattedDate = sdf.format(date);
 
         SQLiteDatabase db = dbhandler.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("transaction_date", formattedDate);
-        values.put("account_no", accountNo);
-        values.put("expense_type", transactionType);
-        values.put("amount", amount);
 
-        if (db.insert("transaction", null, values) >= 0) {
-            Toast.makeText(context, "Transaction successful..", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(context, "Error occured while logging..", Toast.LENGTH_SHORT).show();
-        }
+        ContentValues values = new ContentValues();
+        values.put("transaction_date", date.getTime());
+        values.put("account_no", accountNo);
+        values.put("expense_type",(expenseType == ExpenseType.EXPENSE) ? 0 : 1);
+        values.put("amount", amount);
+        // Inserting Row
+        db.insert("transactionLog", null, values);
         db.close();
     }
 
     @Override
     public List<Transaction> getAllTransactionLogs() {
         List<Transaction> transactions = new ArrayList<>();
-        String select_Query = "SELECT * from transaction";
+        String select_Query = "SELECT * from transactionLog";
 
         SQLiteDatabase db = dbhandler.getReadableDatabase();
         Cursor cursor = db.rawQuery(select_Query, null);
@@ -84,28 +77,27 @@ public class PersistentTransactionDAO implements TransactionDAO {
     @Override
     public List<Transaction> getPaginatedTransactionLogs(int limit) {
         List<Transaction> transactions = new ArrayList<>();
-        String select_Query = "SELECT * from transaction limit" +limit;
-
-        SQLiteDatabase db = dbhandler.getReadableDatabase();
-        Cursor cursor = db.rawQuery(select_Query, null);
-
-
-        if (cursor.moveToFirst()) {
-            do {
-                Date date = new Date(cursor.getLong(0));
-                String acc_no = cursor.getString(1);
-
-                ExpenseType expenseType = ExpenseType.INCOME;
-                if (cursor.getInt(2) == 1) {
-                    expenseType = ExpenseType.EXPENSE;
-                }
-
-                double amount = cursor.getDouble(3);
-
-                Transaction transaction = new Transaction(date, acc_no, expenseType, amount);
-                transactions.add(transaction);
-            } while (cursor.moveToNext());
-        }
+//
+//
+//        SQLiteDatabase db = dbhandler.getReadableDatabase();
+//        Cursor cursor = db.rawQuery("SELECT * FROM transactionLog LIMIT " + limit,null);
+//
+//        if (cursor.moveToFirst()) {
+//            do {
+//                Date date = new Date(cursor.getLong(0));
+//                String acc_no = cursor.getString(1);
+//
+//                ExpenseType expenseType = ExpenseType.INCOME;
+//                if (cursor.getInt(2) == 1) {
+//                    expenseType = ExpenseType.EXPENSE;
+//                }
+//
+//                double amount = cursor.getDouble(3);
+//
+//                Transaction transaction = new Transaction(date, acc_no, expenseType, amount);
+//                transactions.add(transaction);
+//            } while (cursor.moveToNext());
+//        }
 
         return transactions;
     }

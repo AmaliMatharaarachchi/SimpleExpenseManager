@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,28 +100,15 @@ public class PersistentAccountDAO implements AccountDAO {
         SQLiteDatabase db = dbHandler.getWritableDatabase();
 
 
-        Cursor cursor = db.query("account", new String[]{"account_no", "bank", "acc_holder", "balance"}, "account_no =?", new String[]{accountNo}, null, null, null);
-        if (cursor != null) {
-            cursor.moveToFirst();
-
+        String sql = "UPDATE Account SET balance = balance + ?";
+        SQLiteStatement statement = db.compileStatement(sql);
+        if(expenseType == ExpenseType.EXPENSE){
+            statement.bindDouble(1,-amount);
+        }else{
+            statement.bindDouble(1,amount);
         }
-        double currentamount = cursor.getDouble(3);
 
-        switch (expenseType) {
-            case EXPENSE:
-                currentamount -= amount;
-                break;
-            case INCOME:
-                currentamount += amount;
-                break;
-        }
-        ContentValues values = new ContentValues();
-
-        values.put("balance", currentamount);
-
-        // updating row
-        db.update("account", values, "account_no = ?",
-                new String[]{String.valueOf(accountNo)});
+        statement.executeUpdateDelete();
 
 
     }

@@ -11,27 +11,27 @@ public class DBHandler extends SQLiteOpenHelper{
     public static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "simpleExpenseManager.db";
 
-    private static final String CREATE_TABLE_ACCOUNT = "CREATE TABLE IF NOT EXISTS account" +
+    private static final String CREATE_TABLE_ACCOUNT = "CREATE TABLE account" +
             "(" +
-            "account_no int," +
+            "account_no varchar(20)," +
             "bank varchar(20)," +
             "acc_holder varchar(20) not null," +
-            "balance numeric(12,2)," +
+            "balance double(12,2)," +
             "CONSTRAINT pk_account_id PRIMARY KEY (account_no)" +
             ")";
-    private static final String CREATE_TABLE_TRANSACTION = "CREATE TABLE IF NOT EXISTS transaction" +
+    private static final String CREATE_TABLE_TRANSACTION = "CREATE TABLE transactionLog" +
             "(" +
             "transaction_date date not null," +
-            "account_no int not null," +
-            "expense_type BOOLEAN not null," +
-            "amount numeric(12,2) not null," +
+            "account_no varchar(20) not null," +
+            "expense_type int not null," +
+            "amount double(12,2) not null," +
             "FOREIGN KEY (account_no) REFERENCES account(account_no)" +
             ")";
 
     private static final String DELETE_ACCOUNT_ENTRIES =
             "DROP TABLE IF EXISTS account";
     private static final String DELETE_TRANSACTION_ENTRIES =
-            "DROP TABLE IF EXISTS transaction";
+            "DROP TABLE IF EXISTS transactionLog";
 
 
     private static DBHandler instance;
