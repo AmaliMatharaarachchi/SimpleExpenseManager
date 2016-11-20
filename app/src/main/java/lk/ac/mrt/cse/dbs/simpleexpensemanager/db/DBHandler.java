@@ -11,7 +11,7 @@ public class DBHandler extends SQLiteOpenHelper{
     public static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "simpleExpenseManager.db";
 
-    private static final String CREATE_TABLE_ACCOUNT = "CREATE TABLE account" +
+    private static final String CREATE_TABLE_ACCOUNT = "CREATE TABLE IF NOT EXISTS account" +
             "(" +
             "account_no int," +
             "bank varchar(20)," +
@@ -19,7 +19,7 @@ public class DBHandler extends SQLiteOpenHelper{
             "balance numeric(12,2)," +
             "CONSTRAINT pk_account_id PRIMARY KEY (account_no)" +
             ")";
-    private static final String CREATE_TABLE_TRANSACTION = "CREATE TABLE transaction" +
+    private static final String CREATE_TABLE_TRANSACTION = "CREATE TABLE IF NOT EXISTS transaction" +
             "(" +
             "transaction_date date not null," +
             "account_no int not null," +
