@@ -25,7 +25,6 @@ import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.model.Account;
 /**
  *
  */
-/////////////////////////////////////////////////
 public class InMemoryDemoExpenseManager extends ExpenseManager {
 
     public InMemoryDemoExpenseManager() {
