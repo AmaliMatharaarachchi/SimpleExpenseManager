@@ -7,7 +7,7 @@ import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.AccountDAO;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.TransactionDAO;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.impl.PersistentAccountDAO;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.impl.PersistentTransactionDAO;
-import lk.ac.mrt.cse.dbs.simpleexpensemanager.db.DBHandler;
+//import lk.ac.mrt.cse.dbs.simpleexpensemanager.db.DBHandler;
 
 /**
  * Created by ASUS on 2016-11-20.

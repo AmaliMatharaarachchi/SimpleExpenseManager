@@ -18,24 +18,22 @@ import java.util.Locale;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.TransactionDAO;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.model.ExpenseType;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.model.Transaction;
-import lk.ac.mrt.cse.dbs.simpleexpensemanager.db.DBHandler;
+//import lk.ac.mrt.cse.dbs.simpleexpensemanager.db.DBHandler;
 
 /**
  * Created by ASUS on 2016-11-20.
  */
 public class PersistentTransactionDAO implements TransactionDAO {
-    private final Context context;
-    private final DBHandler dbhandler;
+    private SQLiteDatabase db;
 
-    public PersistentTransactionDAO(Context context) {
-        this.context = context;
-        this.dbhandler = DBHandler.getHelper(context);
+    public PersistentTransactionDAO(SQLiteDatabase db){
+        this.db = db;
     }
 
     @Override
     public void logTransaction(Date date, String accountNo, ExpenseType expenseType, double amount) {
 
-        SQLiteDatabase db = dbhandler.getWritableDatabase();
+
 
         ContentValues values = new ContentValues();
         values.put("transaction_date", date.getTime());
@@ -43,16 +41,15 @@ public class PersistentTransactionDAO implements TransactionDAO {
         values.put("expense_type",(expenseType == ExpenseType.EXPENSE) ? 0 : 1);
         values.put("amount", amount);
         // Inserting Row
-        db.insert("transactionLog", null, values);
-        db.close();
+        db.insert("transactionLogger", null, values);
+
     }
 
     @Override
     public List<Transaction> getAllTransactionLogs() {
         List<Transaction> transactions = new ArrayList<>();
-        String select_Query = "SELECT * from transactionLog";
+        String select_Query = "SELECT * from transactionLogger";
 
-        SQLiteDatabase db = dbhandler.getReadableDatabase();
         Cursor cursor = db.rawQuery(select_Query, null);
         if (cursor.moveToFirst()) {
             do {
@@ -70,7 +67,7 @@ public class PersistentTransactionDAO implements TransactionDAO {
                 transactions.add(transaction);
             } while (cursor.moveToNext());
         }
-        db.close();
+
         return transactions;
     }
 
@@ -79,8 +76,7 @@ public class PersistentTransactionDAO implements TransactionDAO {
         List<Transaction> transactions = new ArrayList<>();
 
 
-        SQLiteDatabase db = dbhandler.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM transactionLog LIMIT " + limit,null);
+        Cursor cursor = db.rawQuery("SELECT * FROM transactionLogger LIMIT " + limit,null);
 
         if (cursor.moveToFirst()) {
             do {
