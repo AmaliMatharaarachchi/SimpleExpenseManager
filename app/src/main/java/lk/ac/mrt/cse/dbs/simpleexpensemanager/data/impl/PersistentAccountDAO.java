@@ -1,10 +1,9 @@
 package lk.ac.mrt.cse.dbs.simpleexpensemanager.data.impl;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,7 @@ import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.AccountDAO;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.exception.InvalidAccountException;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.model.Account;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.model.ExpenseType;
-//import lk.ac.mrt.cse.dbs.simpleexpensemanager.db.DBHandler;
+
 
 /**
  * Created by ASUS on 2016-11-20.
@@ -38,7 +37,7 @@ public class PersistentAccountDAO implements AccountDAO {
             } while (cursor.moveToNext());
         }
 
-
+        cursor.close();
         return acc_no;
     }
 
@@ -54,7 +53,7 @@ public class PersistentAccountDAO implements AccountDAO {
             } while (cursor.moveToNext());
         }
 
-
+        cursor.close();
         return acc;
     }
 
@@ -69,7 +68,7 @@ public class PersistentAccountDAO implements AccountDAO {
         }
         acc = new Account(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getDouble(3));
 
-
+        cursor.close();
         return acc;
     }
 
@@ -98,18 +97,21 @@ public class PersistentAccountDAO implements AccountDAO {
     @Override
     public void updateBalance(String accountNo, ExpenseType expenseType, double amount) throws InvalidAccountException {
 
+        Cursor cursor = db.query("account", new String[]{"account_no", "bank", "acc_holder", "balance"}, "account_no =?", new String[]{accountNo}, null, null, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
 
-
-        String sql = "UPDATE Account SET balance = balance + ?";
-        SQLiteStatement statement = db.compileStatement(sql);
-        if(expenseType == ExpenseType.EXPENSE){
-            statement.bindDouble(1,-amount);
-        }else{
-            statement.bindDouble(1,amount);
         }
 
-        statement.executeUpdateDelete();
+        double balance = cursor.getDouble(3);
 
+        ContentValues values = new ContentValues();
+        if (expenseType == ExpenseType.EXPENSE) {
+            values.put("balance", balance - amount);
+        } else {
+            values.put("balance", balance + amount);
+        }
 
+        cursor.close();
     }
 }

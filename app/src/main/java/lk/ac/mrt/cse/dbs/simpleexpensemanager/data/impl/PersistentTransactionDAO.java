@@ -26,7 +26,7 @@ import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.model.Transaction;
 public class PersistentTransactionDAO implements TransactionDAO {
     private SQLiteDatabase db;
 
-    public PersistentTransactionDAO(SQLiteDatabase db){
+    public PersistentTransactionDAO(SQLiteDatabase db) {
         this.db = db;
     }
 
@@ -34,11 +34,10 @@ public class PersistentTransactionDAO implements TransactionDAO {
     public void logTransaction(Date date, String accountNo, ExpenseType expenseType, double amount) {
 
 
-
         ContentValues values = new ContentValues();
         values.put("transaction_date", date.getTime());
         values.put("account_no", accountNo);
-        values.put("expense_type",(expenseType == ExpenseType.EXPENSE) ? 0 : 1);
+        values.put("expense_type", (expenseType == ExpenseType.INCOME) ? 0 : 1);
         values.put("amount", amount);
         // Inserting Row
         db.insert("transactionLogger", null, values);
@@ -67,7 +66,7 @@ public class PersistentTransactionDAO implements TransactionDAO {
                 transactions.add(transaction);
             } while (cursor.moveToNext());
         }
-
+        cursor.close();
         return transactions;
     }
 
@@ -76,7 +75,7 @@ public class PersistentTransactionDAO implements TransactionDAO {
         List<Transaction> transactions = new ArrayList<>();
 
 
-        Cursor cursor = db.rawQuery("SELECT * FROM transactionLogger LIMIT " + limit,null);
+        Cursor cursor = db.rawQuery("SELECT * FROM transactionLogger LIMIT " + limit, null);
 
         if (cursor.moveToFirst()) {
             do {
@@ -94,6 +93,7 @@ public class PersistentTransactionDAO implements TransactionDAO {
                 transactions.add(transaction);
             } while (cursor.moveToNext());
         }
+        cursor.close();
 
         return transactions;
     }
